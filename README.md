@@ -18,3 +18,4 @@ mvn spring-boot:run
 | GET    | /products/{id}   | Get product by ID      |
 | POST   | /products        | Create a new product   |
 | GET    | /health          | Service health check   |
+"# product-service" 

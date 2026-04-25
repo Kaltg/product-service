@@ -7,7 +7,15 @@ import org.springframework.context.annotation.Bean;
 import com.ctbe.productservice.repository.ProductRepository;
 import com.ctbe.productservice.model.Product;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+
 @SpringBootApplication
+@OpenAPIDefinition(info = @Info(
+        title = "Product Service API",
+        version = "1.0.0",
+        description = "RESTful Product Catalogue — Lab 2"
+))
 public class ProductServiceApplication {
 
 	public static void main(String[] args) {
@@ -17,9 +25,9 @@ public class ProductServiceApplication {
 	@Bean
 	CommandLineRunner seedData(ProductRepository repo) {
 		return args -> {
-			repo.save(new Product("Laptop", 1200.00));
-			repo.save(new Product("Monitor", 350.00));
-			repo.save(new Product("Keyboard", 85.00));
+			repo.save(new Product("Laptop", 1200.00, 10, "Electronics"));
+			repo.save(new Product("Monitor", 350.00, 5, "Electronics"));
+			repo.save(new Product("Keyboard", 85.00, 20, "Accessories"));
 		};
 	}
 

@@ -24,26 +24,26 @@ class ProductServiceTest {
 
     @Test
     void findById_returnsProduct_whenProductExists() {
-        // Arrange - define what the mock should return
-        Product laptop = new Product("Laptop", 1200.0);
+        // Arrange
+        Product laptop = new Product("Laptop", 1200.0, 10, "Electronics");
         laptop.setId(1L);
         when(productRepository.findById(1L)).thenReturn(Optional.of(laptop));
 
-        // Act - call the method under test
-        Optional<Product> result = productService.findById(1L);
+        // Act
+        com.ctbe.productservice.dto.ProductResponse result = productService.findById(1L);
 
-        // Assert - verify the result
-        assertThat(result).isPresent();
-        assertThat(result.get().getName()).isEqualTo("Laptop");
-        assertThat(result.get().getPrice()).isEqualTo(1200.0);
+        // Assert
+        assertThat(result.getName()).isEqualTo("Laptop");
+        assertThat(result.getPrice()).isEqualTo(1200.0);
     }
 
     @Test
-    void findById_returnsEmpty_whenProductNotFound() {
+    void findById_throwsException_whenProductNotFound() {
         when(productRepository.findById(99L)).thenReturn(Optional.empty());
 
-        Optional<Product> result = productService.findById(99L);
-
-        assertThat(result).isEmpty();
+        org.junit.jupiter.api.Assertions.assertThrows(
+            com.ctbe.productservice.exception.ResourceNotFoundException.class, 
+            () -> productService.findById(99L)
+        );
     }
 }

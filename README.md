@@ -19,3 +19,5 @@ mvn spring-boot:run
 | POST   | /products        | Create a new product   |
 | GET    | /health          | Service health check   |
 "# product-service" 
+"# product-service" 
+"# product_service" 

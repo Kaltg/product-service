@@ -1,0 +1,21 @@
+# Lab 2 Reflection
+
+**1. Why should the ProductRequest DTO carry the @Valid annotations instead of the Product entity itself?**
+Using `@Valid` on the DTO (Data Transfer Object) rather than the Entity enforces a strict separation of concerns between our web layer and our persistence layer. The API contract (what the client sends) frequently differs from the database schema (what is stored). By validating the DTO, we catch bad data exactly at the boundary of the application before it ever reaches our deeper business or database logic. It also prevents tight coupling; if our database constraints change, our API validation doesn't automatically break or shift.
+
+**2. What is the purpose of the Location header returned on a POST 201 Created response, and which HTTP specification mandates it?**
+The `Location` header is used to tell the client the exact URL/URI where the newly created resource can be accessed. Instead of the client guessing the ID or having to parse it out of the body, they can simply follow the `Location` header to retrieve the new data. This behavior is defined and mandated by the HTTP/1.1 specification (specifically RFC 9110, which obsoleted RFC 7231). 
+
+**3. Explain the difference between @ControllerAdvice and @ExceptionHandler. When would you use each?**
+- `@ExceptionHandler` is a method-level annotation. It catches exceptions thrown only within the specific controller class where it is defined. You use this for localized errors that are highly specific to one single endpoint or controller.
+- `@ControllerAdvice` (and its REST sibling, `@RestControllerAdvice`) is a class-level annotation that acts as a global interceptor. It catches exceptions thrown by *any* controller across the entire application. You use this to define application-wide error handling rules (like returning standard 404 formats) to keep your code DRY (Don't Repeat Yourself).
+
+**4. In your MockMvc tests you used @Transactional on the test class. What would happen to the database state between tests if you removed this annotation?**
+If `@Transactional` was removed, any data inserted, updated, or deleted by a test would remain permanently in the database for the subsequent tests. This results in "test pollution," where the outcome of one test changes depending on the execution order of the other tests. By using `@Transactional`, Spring automatically rolls back the database transaction at the end of each test method, ensuring a perfectly clean slate every time.
+
+**5. What does RFC 9457 define, and why does following it produce better APIs than returning a generic { error: 'something went wrong' } message?**
+RFC 9457 (formerly RFC 7807) defines "Problem Details for HTTP APIs." It standardizes how APIs should communicate error structures, specifying standard fields like `type`, `title`, `status`, and `detail`. Using this is better than a generic or custom error message because clients consuming the API don't have to write custom parsing logic for every different API they use. A standard format allows frontend applications and automated clients to predictably ingest and react to HTTP platform errors.
+
+**6. What is the difference between an integration test (MockMvc) and a unit test (Mockito)? When is each approach preferable?**
+- **Integration Test (MockMvc):** Tests how multiple layers of the application work together. MockMvc loads the Spring runtime, handles HTTP JSON serialization, tests routing, validates inputs, and triggers the database via the controller. It is preferable when you want to guarantee that an actual HTTP request will result in the correct HTTP response and save to the database.
+- **Unit Test (Mockito):** Tests a single class (like a `Service`) in complete isolation. Dependencies (like repositories) are "mocked" (faked) returning hardcoded data. It does not load the Spring server. It is preferable when you want to quickly test complex if/else business logic, edge conditions, or algorithms without the overhead of HTTP servers and databases.
